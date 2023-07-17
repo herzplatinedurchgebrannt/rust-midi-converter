@@ -36,40 +36,32 @@ fn main() {
     for element in &mut smf.tracks[0].iter_mut(){
 
         match element.kind {
-            TrackEventKind::Midi { channel, message: MidiMessage::NoteOn { mut key, vel } } => { 
+            TrackEventKind::Midi { channel: _, message: MidiMessage::NoteOn { key, vel } } => { 
                 
                 for change_midi in vec.iter(){
 
                     if key == change_midi.note_in{
                         *element = TrackEvent{delta: element.delta, kind: TrackEventKind::Midi { channel: 1.into(), message: MidiMessage:: NoteOn { key: change_midi.note_out, vel: vel }}};
+                        println!("Changed {} from {} to {}", change_midi.name, change_midi.note_in, change_midi.note_out);
                     }
                 }            
             },
             _ => println!("no midi"),
         }
     }
-
-
-
-
-
-
     // iterate all tracks. drum midi file should only have 1 track
     for (i, track) in smf.tracks.iter().enumerate() {
         println!("track {} has {} events", i, track.len());
 
         // iterate all events of track
-        for (j, mut event) in smf.tracks[i].iter().enumerate(){
-            println!("delta: {}, kind: {:?}", event.delta, event.kind);
-
-
-            let bla = &TrackEvent {delta: 30.into(), kind: TrackEventKind::Midi { channel: 1.into(), message: MidiMessage::NoteOn { key: 35.into(), vel: 100.into() } }};
-
-
-
-            
+        for (j, event) in smf.tracks[i].iter().enumerate(){
+            println!("delta: {}, kind: {:?}", event.delta, event.kind)
     }
 
+    match smf.save("Matt-Song1-Pattern01.mid") {
+        Ok(_) => { println!("nice!")},
+        Err(_) => { println!("not so nice :-(!")},
+    };
 
     println!("Done.");
 }
